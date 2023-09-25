@@ -1,14 +1,17 @@
 package com.microserviceproject.productservice.service;
 
 import com.microserviceproject.productservice.dto.ProductRequest;
+import com.microserviceproject.productservice.dto.ProductResponse;
 import com.microserviceproject.productservice.model.Product;
 import com.microserviceproject.productservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor // taking use of this annotation to prevent ourselves from creating constructor for every class.
 @Slf4j
 public class ProductService {
 
@@ -24,6 +27,21 @@ public class ProductService {
         productRepository.save(product);
         log.info("Product {} is saved", product.getId());
 
+    }
+
+    public List<ProductResponse> getAllProducts(){
+        List<Product> products = productRepository.findAll();
+
+        return products.stream().map(this::mapTpProductResponse).toList();
+    }
+
+    private ProductResponse mapTpProductResponse(Product product){
+        return ProductResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .description(product.getDescription())
+                .price(product.getPrice())
+                .build();
     }
 
 }
